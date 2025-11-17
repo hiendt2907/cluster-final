@@ -24,10 +24,10 @@ RUN mkdir -p /etc/pgpool-II /var/run/pgpool /var/log/pgpool /config /etc/ssl/pgp
     && chown -R postgres:postgres /etc/pgpool-II /var/run/pgpool /var/log/pgpool /etc/ssl/pgpool
 
 # Copy SSL certificates
-COPY pgpool/ssl/server.crt /etc/ssl/pgpool/server.crt
-COPY pgpool/ssl/server.key /etc/ssl/pgpool/server.key
-COPY pgpool/ssl/client.crt /etc/ssl/pgpool/client.crt
-COPY pgpool/ssl/client.key /etc/ssl/pgpool/client.key
+COPY ssl/server.crt /etc/ssl/pgpool/server.crt
+COPY ssl/server.key /etc/ssl/pgpool/server.key
+COPY ssl/client.crt /etc/ssl/pgpool/client.crt
+COPY ssl/client.key /etc/ssl/pgpool/client.key
 
 # Set proper permissions for SSL certificates
 RUN chown postgres:postgres /etc/ssl/pgpool/*.crt /etc/ssl/pgpool/*.key && \
@@ -35,17 +35,17 @@ RUN chown postgres:postgres /etc/ssl/pgpool/*.crt /etc/ssl/pgpool/*.key && \
     chmod 644 /etc/ssl/pgpool/*.crt
 
 # Copy configuration files to /config (will be copied to /etc/pgpool-II at runtime)
-COPY pgpool/pgpool.conf /config/
-COPY pgpool/pool_hba.conf /config/
-COPY pgpool/pcp.conf /config/
+COPY pgpool.conf /config/
+COPY pool_hba.conf /config/
+COPY pcp.conf /config/
 
 # Copy scripts
-COPY pgpool/entrypoint.sh /usr/local/bin/
-COPY pgpool/pgpool_monitor.sh /usr/local/bin/
-COPY pgpool/monitor.sh /usr/local/bin/
-COPY pgpool/failover.sh /usr/local/bin/
-COPY pgpool/pcp_debug_runner.sh /usr/local/bin/pcp_debug_runner.sh
-COPY pgpool/pcp_cleanup_debug.sh /usr/local/bin/pcp_cleanup_debug.sh
+COPY entrypoint.sh /usr/local/bin/
+COPY pgpool_monitor.sh /usr/local/bin/
+COPY monitor.sh /usr/local/bin/
+COPY failover.sh /usr/local/bin/
+COPY pcp_debug_runner.sh /usr/local/bin/pcp_debug_runner.sh
+COPY pcp_cleanup_debug.sh /usr/local/bin/pcp_cleanup_debug.sh
 RUN chmod +x /usr/local/bin/*.sh
 RUN chmod +x /usr/local/bin/pcp_debug_runner.sh /usr/local/bin/pcp_cleanup_debug.sh || true
 
