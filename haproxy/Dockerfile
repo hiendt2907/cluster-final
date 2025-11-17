@@ -14,13 +14,13 @@ RUN apk add --no-cache \
 RUN mkdir -p /var/lib/haproxy /run/haproxy /usr/local/etc/haproxy
 
 # Copy configuration files (paths are relative to the compose build context `.`)
-COPY haproxy.cfg /usr/local/etc/haproxy/haproxy.cfg
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY haproxy/haproxy.cfg /usr/local/etc/haproxy/haproxy.cfg
+COPY haproxy/entrypoint.sh /usr/local/bin/entrypoint.sh
 
 # Copy SSL certificates (optional - used when HAPROXY_ENABLE_SSL=1)
 RUN mkdir -p /etc/ssl/haproxy
-COPY ssl/server.crt /etc/ssl/haproxy/server.crt
-COPY ssl/server.key /etc/ssl/haproxy/server.key
+COPY haproxy/ssl/server.crt /etc/ssl/haproxy/server.crt
+COPY haproxy/ssl/server.key /etc/ssl/haproxy/server.key
 RUN chmod 600 /etc/ssl/haproxy/server.key || true && chmod 644 /etc/ssl/haproxy/server.crt || true
 
 RUN chmod +x /usr/local/bin/entrypoint.sh
