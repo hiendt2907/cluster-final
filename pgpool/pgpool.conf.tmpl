@@ -1,0 +1,162 @@
+#------------------------------------------------------------------------------
+# CONNECTIONS
+#------------------------------------------------------------------------------
+listen_addresses = '*'
+port = 5432
+pcp_listen_addresses = '*'
+pcp_port = 9898
+socket_dir = '/var/run/pgpool'
+
+#------------------------------------------------------------------------------
+# BACKEND CONFIGURATION
+#------------------------------------------------------------------------------
+backend_hostname0 = 'pg-1'
+backend_port0 = 5432
+backend_weight0 = 0
+backend_data_directory0 = '/var/lib/postgresql/data'
+backend_flag0 = 'ALLOW_TO_FAILOVER'
+backend_application_name0 = 'pg-1'
+
+backend_hostname1 = 'pg-2'
+backend_port1 = 5432
+backend_weight1 = 1
+backend_data_directory1 = '/var/lib/postgresql/data'
+backend_flag1 = 'ALLOW_TO_FAILOVER'
+backend_application_name1 = 'pg-2'
+
+backend_hostname2 = 'pg-3'
+backend_port2 = 5432
+backend_weight2 = 1
+backend_data_directory2 = '/var/lib/postgresql/data'
+backend_flag2 = 'ALLOW_TO_FAILOVER'
+backend_application_name2 = 'pg-3'
+
+#------------------------------------------------------------------------------
+# RUNNING MODE
+#------------------------------------------------------------------------------
+backend_clustering_mode = 'streaming_replication'
+num_init_children = 500
+max_pool = 10
+listen_backlog_multiplier = 2
+serialize_accept = off
+
+#------------------------------------------------------------------------------
+# LOAD BALANCING MODE
+#------------------------------------------------------------------------------
+load_balance_mode = on
+statement_level_load_balance = on
+ignore_leading_white_space = on
+
+disable_load_balance_on_write = 'transaction'
+dml_adaptive_object_relationship_list = ''
+black_function_list = 'nextval,setval,pg_catalog.nextval,pg_catalog.setval,currval,lastval'
+white_function_list = ''
+black_query_pattern_list = ''
+white_query_pattern_list = ''
+
+#------------------------------------------------------------------------------
+# STREAMING REPLICATION MODE
+#------------------------------------------------------------------------------
+sr_check_period = 30
+sr_check_user = 'repmgr'
+sr_check_password = '${REPMGR_PASSWORD}'
+sr_check_database = 'postgres'
+delay_threshold = 10485760
+
+#------------------------------------------------------------------------------
+# HEALTH CHECK
+#------------------------------------------------------------------------------
+health_check_period = 30
+health_check_timeout = 10
+health_check_user = 'repmgr'
+health_check_password = '${REPMGR_PASSWORD}'
+health_check_database = 'postgres'
+health_check_max_retries = 3
+health_check_retry_delay = 5
+connect_timeout = 10000
+
+#------------------------------------------------------------------------------
+# FAILOVER AND FAILBACK
+#------------------------------------------------------------------------------
+failover_on_backend_error = off
+failover_command = '/usr/local/bin/failover.sh %d %h %p %D %m %H %M %P %r %R %N %S'
+failback_command = ''
+failover_require_consensus = off
+search_primary_node_timeout = 300
+
+#------------------------------------------------------------------------------
+# WATCHDOG (for pgpool-II HA)
+#------------------------------------------------------------------------------
+use_watchdog = on
+
+# This pgpool node(s) - dynamically populated
+${WATCHDOG_BLOCK}
+
+# Common watchdog settings
+wd_authkey = 'pgpool_watchdog_auth'
+wd_ipc_socket_dir = '/var/run/pgpool'
+delegate_ip = ''
+if_up_cmd = ''
+if_down_cmd = ''
+arping_cmd = ''
+
+# Watchdog heartbeat
+wd_heartbeat_port0 = 9694
+wd_heartbeat_keepalive0 = 2
+wd_heartbeat_deadtime0 = 30
+
+# Other pgpool monitoring
+wd_monitoring_interfaces_list = ''
+wd_lifecheck_method = 'heartbeat'
+wd_interval = 10
+
+wd_escalation_command = ''
+wd_de_escalation_command = ''
+
+wd_life_point = 3
+wd_lifecheck_query = 'SELECT 1'
+wd_lifecheck_dbname = 'postgres'
+wd_lifecheck_user = 'repmgr'
+wd_lifecheck_password = '${REPMGR_PASSWORD}'
+
+${OTHER_PGPOOL_BLOCK}
+
+${HEARTBEAT_BLOCK}
+
+#------------------------------------------------------------------------------
+# CONNECTION POOL
+#------------------------------------------------------------------------------
+connection_cache = on
+reset_query_list = 'ABORT; DISCARD ALL'
+
+#------------------------------------------------------------------------------
+# LOGGING
+#------------------------------------------------------------------------------
+log_destination = 'stderr'
+log_line_prefix = '%t: pid %p: '
+log_connections = off
+log_disconnections = off
+log_hostname = on
+log_statement = off
+log_per_node_statement = off
+log_client_messages = off
+log_standby_delay = 'if_over_threshold'
+log_min_messages = warning
+
+#------------------------------------------------------------------------------
+# PCP (pgpool Control Protocol)
+#------------------------------------------------------------------------------
+pcp_socket_dir = '/var/run/pgpool'
+
+#------------------------------------------------------------------------------
+# MISC
+#------------------------------------------------------------------------------
+memory_cache_enabled = off
+relcache_expire = 0
+relcache_size = 256
+
+enable_pool_hba = on
+pool_passwd = 'pool_passwd'
+authentication_timeout = 60
+
+allow_clear_text_frontend_auth = on
